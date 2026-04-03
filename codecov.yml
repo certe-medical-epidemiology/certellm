@@ -17,23 +17,10 @@
 #  useful, but it comes WITHOUT ANY WARRANTY OR LIABILITY.              #
 # ===================================================================== #
 
-#' Title of function
-#'
-#' Short description
-#' @param arg1 text
-#' @rdname title123
-#' @export
-#' @importFrom dplyr summarise n_distinct
-#' @examples
-#' a <- "example1"
-#' b <- "example2"
-abc <- function() {
+coverage:
+  range:
+  - 0.0
+  - 90.0
 
-}
-
-#' @param d text
-#' @rdname title123
-#' @export
-def <- function(d) {
-
-}
+ignore:
+  - "R/universal.R"

@@ -17,11 +17,11 @@
 #  useful, but it comes WITHOUT ANY WARRANTY OR LIABILITY.              #
 # ===================================================================== #
 
-title: "certetemplate"
-url: "https://certe-medical-epidemiology.github.io/certetemplate/"
+title: "certellm"
+url: "https://certe-medical-epidemiology.github.io/certellm/"
 
 navbar:
-  title: "AMR (for R)"
+  title: "certellm"
   left:
     - text: "Home"
       icon: "fa-home"
@@ -31,8 +31,11 @@ navbar:
       href: "reference/index.html"
     - text: "Source Code"
       icon: "fab fa-github"
-      href: "https://github.com/certe-medical-epidemiology/certetemplate"
+      href: "https://github.com/certe-medical-epidemiology/certellm"
   right:
+    - text: "Certe Med Epi"
+      icon: "fab fa-github"
+      href: "https://github.com/certe-medical-epidemiology"
     - text: "Certe Website"
       icon: "fa-flask"
       href: "https://certe.nl"

@@ -18,40 +18,11 @@
 # ===================================================================== #
 
 on:
-  workflow_call:
-
-name: Codecov
+  push:
+    # only run when pushed to the 'main' branch
+    branches: 'main' 
 
 jobs:
-  Codecov:
-    runs-on: ubuntu-latest
-    env:
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Generate Dutch language files for examples 
-        if: runner.os == 'Linux'
-        run: |
-          sudo locale-gen nl_NL
-          sudo locale-gen nl_NL.UTF-8
-          sudo update-locale
-
-      - uses: r-lib/actions/setup-pandoc@v2
-
-      - uses: r-lib/actions/setup-r@v2
-        with:
-          # use RStudio Package Manager to quickly install packages
-          use-public-rspm: true
-          # add our own R-universe to install other Certe packages
-          extra-repositories: 'https://certe-medical-epidemiology.r-universe.dev'
-
-      - uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          extra-packages: any::covr
-          upgrade: 'TRUE'
-
-      - name: Test coverage
-        run: covr::codecov()
-        shell: Rscript {0}
+  website:
+    uses: certe-medical-epidemiology/template/.github/workflows/reusable-workflow-website.yml@main
+    secrets: inherit

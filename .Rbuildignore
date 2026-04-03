@@ -1,8 +1,11 @@
-^template\.Rproj$
+^certellm\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^\.github$
-^certetemplate\.Rproj$
+^certetoolbox\.Rproj$
 ^_pkgdown\.yml$
 ^logo\.svg$
 ^\.DS_Store$
+^data-raw$
+^pkgdown$
+^codecov\.yml$

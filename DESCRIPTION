@@ -1,5 +1,5 @@
-Package: certetemplate
-Title: A Certe R Package for ...
+Package: certellm
+Title: A Certe R Package for working with large language models
 Version: 0.0.1
 Authors@R: c(
   person(given = c("Matthijs", "S."), 
@@ -16,16 +16,21 @@ Authors@R: c(
          email = "e.dijkstra@certe.nl"),
   person(given = "Certe Medical Diagnostics & Advice Foundation",
          role = c("cph", "fnd")))
-Description: A Certe R Package for ... .
+Description: A Certe R Package for working with large language models.
   This package is part of the 'certedata' universe.
-URL: https://certe-medical-epidemiology.github.io/certetemplate, https://github.com/certe-medical-epidemiology/certetemplate
+URL: https://certe-medical-epidemiology.github.io/certellm, https://github.com/certe-medical-epidemiology/certellm
 Depends: 
-  R (>= 3.6.0)
+  R (>= 4.2.0)
+Imports:
+  ellmer (>= 0.4.0),
+  rlang (>= 1.1.0),
+  yaml
 Suggests: 
+  cli (>= 3.4.0),
+  plot2,
   testthat (>= 2.0.0)
 License: GPL-2
 Encoding: UTF-8
-LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.3.3
 Config/testthat/edition: 2

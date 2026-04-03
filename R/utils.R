@@ -17,7 +17,6 @@
 #  useful, but it comes WITHOUT ANY WARRANTY OR LIABILITY.              #
 # ===================================================================== #
 
-library(testthat)
-library(certellm)
+pkg_env <- new.env(hash = FALSE)
 
-test_check("certellm")
+# globalVariables(c(""))
