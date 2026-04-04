@@ -3,6 +3,7 @@
 \name{chat}
 \alias{chat}
 \alias{initiate_llm}
+\alias{new_chat}
 \alias{chat_in_browser}
 \alias{chat_in_console}
 \alias{get_provider}
@@ -11,18 +12,20 @@
 \title{Chat With Local LLM}
 \usage{
 initiate_llm(
-  address = "http://localhost",
-  port = 11434,
+  address = read_secret("llm.address"),
+  port = read_secret("llm.port"),
   system_prompt = read_secret("llm.system_prompt"),
-  model = read_secret("llm.default.model"),
+  model = read_secret("llm.model"),
   ...
 )
 
-chat(input, ...)
+new_chat(input, ...)
 
-chat_in_browser(...)
+chat(input, new = FALSE, ...)
 
-chat_in_console(...)
+chat_in_browser(new = FALSE, ...)
+
+chat_in_console(new = FALSE, ...)
 
 get_provider()
 
@@ -43,6 +46,8 @@ Use \code{models_ollama()} to see all options.}
 \item{...}{Argument passed on to \code{\link[ellmer:chat_ollama]{ellmer::chat_ollama()}}.}
 
 \item{input}{Text for input.}
+
+\item{new}{Initiate new LLM instance.}
 }
 \description{
 Chat With Local LLM

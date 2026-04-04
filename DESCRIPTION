@@ -1,6 +1,6 @@
 Package: certellm
 Title: A Certe R Package for working with large language models
-Version: 0.0.1
+Version: 0.1.0
 Authors@R: c(
   person(given = c("Matthijs", "S."), 
          family = "Berends",
@@ -23,7 +23,6 @@ Depends:
   R (>= 4.2.0)
 Imports:
   ellmer (>= 0.4.0),
-  rlang (>= 1.1.0),
   yaml
 Suggests: 
   cli (>= 3.4.0),

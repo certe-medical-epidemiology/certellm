@@ -22,26 +22,26 @@
 #' @param input Text for input.
 #' @param address Server address, defaults to local.
 #' @param port Server port, defaults to local.
+#' @param new Initiate new LLM instance.
 #' @param ... Argument passed on to [ellmer::chat_ollama()].
 #' @inheritParams ellmer::chat_ollama
 #' @importFrom ellmer chat_ollama
 #' @rdname chat
 #' @name chat
 #' @export
-initiate_llm <- function(address = "http://localhost",
-                           port = 11434,
-                           system_prompt = read_secret("llm.system_prompt"),
-                           model = read_secret("llm.default.model"),
-                           ...) {
-  base_url <- paste0(address, ":", port)
+initiate_llm <- function(address = read_secret("llm.address"),
+                         port = read_secret("llm.port"),
+                         system_prompt = read_secret("llm.system_prompt"),
+                         model = read_secret("llm.model"),
+                         ...) {
   system_prompt <- paste0(system_prompt,
                           "# Over de gebruiker\n",
                           "Je gebruiker heet ", read_secret(paste0("user.", Sys.info()["user"], ".fullname")),
                           ", die bij Certe werkt als ", tolower(read_secret(paste0("user.", Sys.info()["user"], ".jobtitle"))),
                           ". Je bent diens persoonlijke, behulpzame assistent.")
   pkg_env$chat_model <- chat_ollama(system_prompt = system_prompt,
-                                    base_url = base_url,
-                                    model = read_secret("llm.default.model"),
+                                    base_url = paste0(address, ":", port),
+                                    model = model,
                                     ...)
   # pkg_env$chat_model$register_tool(tool_plot2)
   message("LLM opgestart: ",
@@ -52,9 +52,15 @@ initiate_llm <- function(address = "http://localhost",
 
 #' @rdname chat
 #' @export
-chat <- function(input,
-                 ...) {
-  if (is.null(pkg_env$chat_model)) {
+new_chat <- function(input, ...) {
+  initiate_llm(...)
+  pkg_env$chat_model$chat(input)
+}
+
+#' @rdname chat
+#' @export
+chat <- function(input, new = FALSE, ...) {
+  if (is.null(pkg_env$chat_model) || isTRUE(new)) {
     initiate_llm(...)
   }
   pkg_env$chat_model$chat(input)
@@ -63,8 +69,8 @@ chat <- function(input,
 #' @rdname chat
 #' @importFrom ellmer live_browser
 #' @export
-chat_in_browser <- function(...) {
-  if (is.null(pkg_env$chat_model)) {
+chat_in_browser <- function(new = FALSE, ...) {
+  if (is.null(pkg_env$chat_model) || isTRUE(new)) {
     initiate_llm(...)
   }
   cli::cat_boxx(c("Chat starten in browser.", "Gebruik Ctrl+C om af te sluiten."), 
@@ -75,8 +81,8 @@ chat_in_browser <- function(...) {
 #' @rdname chat
 #' @importFrom ellmer live_console
 #' @export
-chat_in_console <- function(...) {
-  if (is.null(pkg_env$chat_model)) {
+chat_in_console <- function(new = FALSE, ...) {
+  if (is.null(pkg_env$chat_model) || isTRUE(new)) {
     initiate_llm(...)
   }
   cli::cat_boxx(c("Chat starten in console.", "Gebruik \"\"\" voor multi-line input.", 
@@ -87,24 +93,27 @@ chat_in_console <- function(...) {
 #' @rdname chat
 #' @export
 get_provider <- function() {
-  if (!is.null(pkg_env$chat_model)) {
-    pkg_env$chat_model$get_provider()
+  if (is.null(pkg_env$chat_model)) {
+    message("No LLM initiated")
   }
+  pkg_env$chat_model$get_provider()
 }
 
 #' @rdname chat
 #' @export
 get_system_prompt <- function() {
-  if (!is.null(pkg_env$chat_model)) {
-    pkg_env$chat_model$get_system_prompt()
+  if (is.null(pkg_env$chat_model)) {
+    message("No LLM initiated")
   }
+  pkg_env$chat_model$get_system_prompt()
 }
 
 #' @rdname chat
 #' @export
 get_tokens <- function() {
-  if (!is.null(pkg_env$chat_model)) {
-    pkg_env$chat_model$get_tokens()
+  if (is.null(pkg_env$chat_model)) {
+    message("No LLM initiated")
   }
+  pkg_env$chat_model$get_tokens()
 }
 
