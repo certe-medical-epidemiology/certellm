@@ -18,6 +18,7 @@
 # ===================================================================== #
 
 #' @importFrom ellmer tool type_string type_enum type_number type_integer type_boolean type_array type_ignore
+#' @importFrom rlang sym syms
 tool_plot2 <- tool(
   plot2::plot2,
   name = "plot2",

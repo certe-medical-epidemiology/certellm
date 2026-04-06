@@ -73,9 +73,9 @@ initiate_llm <- function(preset = read_secret("llm.default.preset"),
   # a minimal probe to confirm actual tool support. On failure the model is
   # recreated without tools, so initiate_llm() always leaves a working instance.
   tools_registered <- tryCatch({
-    if (requireNamespace("certeplot2", quietly = TRUE)) {
-      pkg_env$chat_object$register_tool(tool_plot2)
-    }
+    # if (requireNamespace("certeplot2", quietly = TRUE)) {
+    #   pkg_env$chat_object$register_tool(tool_plot2)
+    # }
     pkg_env$chat_object$register_tool(tool_get_df_summary)
     pkg_env$chat_object$register_tool(tool_list_objects)
     pkg_env$chat_object$register_tool(tool_get_colnames)

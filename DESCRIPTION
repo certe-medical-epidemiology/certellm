@@ -24,8 +24,7 @@ Depends:
 Imports:
   cli (>= 3.6.0),
   ellmer (>= 0.4.0),
-  yaml,
-  rlang
+  yaml
 Suggests:
   certeplot2,
   testthat (>= 2.0.0)
