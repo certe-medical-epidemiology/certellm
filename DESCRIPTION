@@ -1,6 +1,6 @@
 Package: certellm
 Title: A Certe R Package for working with large language models
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: c(
   person(given = c("Matthijs", "S."), 
          family = "Berends",
@@ -22,10 +22,12 @@ URL: https://certe-medical-epidemiology.github.io/certellm, https://github.com/c
 Depends: 
   R (>= 4.2.0)
 Imports:
+  cli (>= 3.6.0),
   ellmer (>= 0.4.0),
-  yaml
-Suggests: 
-  cli (>= 3.4.0),
+  yaml,
+  rlang
+Suggests:
+  certeplot2,
   testthat (>= 2.0.0)
 License: GPL-2
 Encoding: UTF-8

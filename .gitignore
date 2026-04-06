@@ -45,3 +45,5 @@ Thumbs.db
 # R Environment Variables
 .Renviron
 .Rproj.user
+
+.claude

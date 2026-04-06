@@ -17,103 +17,209 @@
 #  useful, but it comes WITHOUT ANY WARRANTY OR LIABILITY.              #
 # ===================================================================== #
 
-#' Chat With Local LLM
-#' 
+#' Chat With (Local) LLM
+#'
 #' @param input Text for input.
-#' @param address Server address, defaults to local.
-#' @param port Server port, defaults to local.
+#' @param preset Name of a preset defined under `llm.presets` in the secrets
+#'   YAML. Defaults to `llm.default.preset`. Each preset must contain a
+#'   `provider` (e.g. `"ollama"`, `"anthropic"`) and a `model` field; an
+#'   optional `url` sets a non-default base URL (e.g. an internal Ollama
+#'   server). Individual `provider`, `model`, and `url` arguments override
+#'   the preset when supplied.
+#' @param provider Override the provider from the preset.
+#' @param model Override the model from the preset.
+#' @param url Override the base URL from the preset. Passed as `base_url` to
+#'   the provider function; omit for providers with fixed endpoints
+#'   (e.g. Anthropic).
+#' @param system_prompt System prompt text. Defaults to `llm.system_prompt`
+#'   from the secrets file.
 #' @param new Initiate new LLM instance.
-#' @param ... Argument passed on to [ellmer::chat_ollama()].
-#' @inheritParams ellmer::chat_ollama
-#' @importFrom ellmer chat_ollama
+#' @param ... Arguments passed on to [ellmer::chat()].
+#' @importFrom cli cli_alert_info
 #' @rdname chat
 #' @name chat
 #' @export
-initiate_llm <- function(address = read_secret("llm.address"),
-                         port = read_secret("llm.port"),
+initiate_llm <- function(preset = read_secret("llm.default.preset"),
+                         provider = NULL,
+                         model = NULL,
+                         url = NULL,
                          system_prompt = read_secret("llm.system_prompt"),
-                         model = read_secret("llm.model"),
                          ...) {
-  system_prompt <- paste0(system_prompt,
-                          "# Over de gebruiker\n",
-                          "Je gebruiker heet ", read_secret(paste0("user.", Sys.info()["user"], ".fullname")),
-                          ", die bij Certe werkt als ", tolower(read_secret(paste0("user.", Sys.info()["user"], ".jobtitle"))),
-                          ". Je bent diens persoonlijke, behulpzame assistent.")
-  pkg_env$chat_model <- chat_ollama(system_prompt = system_prompt,
-                                    base_url = paste0(address, ":", port),
-                                    model = model,
-                                    ...)
-  # pkg_env$chat_model$register_tool(tool_plot2)
-  message("LLM opgestart: ",
-          pkg_env$chat_model$get_provider()@name, "/",
-          pkg_env$chat_model$get_provider()@model, " via ",
-          pkg_env$chat_model$get_provider()@base_url)
+  # Resolve connection settings: preset provides the base, explicit arguments
+  # override individual fields when supplied.
+  preset_config     <- read_preset(preset)
+  resolved_provider <- if (!is.null(provider)) provider else preset_config$provider
+  resolved_model    <- if (!is.null(model))    model    else preset_config$model
+  resolved_url      <- if (!is.null(url))      url      else preset_config$url  # may be NULL
+  
+  # Add user info
+  user_name <- read_secret(paste0("user.", Sys.info()["user"], ".fullname"))
+  user_jobtitle <- read_secret(paste0("user.", Sys.info()["user"], ".jobtitle")) 
+  if (user_name != "" && user_jobtitle != "") {
+    user_context <- paste0(
+      "\n## Over de gebruiker\n",
+      "Je gebruiker heet ", user_name,
+      ", die bij Certe werkt als ", tolower(user_jobtitle),
+      ". Je bent diens persoonlijke, behulpzame assistent."
+    )
+    system_prompt <- paste0(system_prompt, user_context)
+  }
+  
+  pkg_env$chat_object <- .create_chat_model(resolved_provider, resolved_model,
+                                           resolved_url, system_prompt, ...)
+
+  # Register tools. register_tool() itself never errors on unsupported models;
+  # Ollama returns HTTP 400 only at inference time. So after registration we send
+  # a minimal probe to confirm actual tool support. On failure the model is
+  # recreated without tools, so initiate_llm() always leaves a working instance.
+  tools_registered <- tryCatch({
+    if (requireNamespace("certeplot2", quietly = TRUE)) {
+      pkg_env$chat_object$register_tool(tool_plot2)
+    }
+    pkg_env$chat_object$register_tool(tool_get_df_summary)
+    pkg_env$chat_object$register_tool(tool_list_objects)
+    pkg_env$chat_object$register_tool(tool_get_colnames)
+    TRUE
+  }, error = function(e) {
+    warning("Tool registration failed: ", conditionMessage(e), call. = FALSE)
+    FALSE
+  })
+
+  if (tools_registered) {
+    probe <- tryCatch({
+      suppressMessages(pkg_env$chat_object$chat("."))
+      pkg_env$chat_object$set_turns(list())
+      TRUE
+    }, error = function(e) conditionMessage(e))
+
+    if (!isTRUE(probe)) {
+      if (grepl("does not support tools", probe, fixed = TRUE)) {
+        pkg_env$chat_object <- .create_chat_model(resolved_provider, resolved_model,
+                                                 resolved_url, system_prompt, ...)
+        pkg_env$tools_supported <- FALSE
+      } else {
+        stop(probe, call. = FALSE)
+      }
+    } else {
+      pkg_env$tools_supported <- TRUE
+    }
+  } else {
+    pkg_env$tools_supported <- FALSE
+  }
+  
+  # Build startup message; base_url is not present on all provider objects
+  prov_obj <- pkg_env$chat_object$get_provider()
+  url_str  <- tryCatch(paste0(" via {.url ", prov_obj@base_url, "}"), error = function(e) "")
+  cli_alert_info(paste0("LLM opgestart: {.field ", prov_obj@name, "/", prov_obj@model, "}", url_str,
+                        if (isTRUE(pkg_env$tools_supported)) " (tools: enabled)" else " (tools: disabled)"))
+}
+
+#' @rdname chat
+#' @export
+list_presets <- function() {
+  presets <- read_secret("llm.presets")
+  if (!is.list(presets) || length(presets) == 0) {
+    message("No presets found under 'llm.presets' in the secrets file.")
+    return(invisible(character(0)))
+  }
+  default <- read_secret("llm.default.preset")
+  info <- vapply(names(presets), function(nm) {
+    p       <- presets[[nm]]
+    flag    <- if (nzchar(default) && nm == default) " [default]" else ""
+    url_str <- if (!is.null(p$url)) paste0(" @ ", p$url) else ""
+    paste0(nm, flag, ": ", p$provider, "/", p$model, url_str)
+  }, character(1))
+  message(paste(info, collapse = "\n"))
+  invisible(names(presets))
 }
 
 #' @rdname chat
 #' @export
 new_chat <- function(input, ...) {
   initiate_llm(...)
-  pkg_env$chat_model$chat(input)
+  pkg_env$chat_object$chat(input)
 }
 
 #' @rdname chat
 #' @export
 chat <- function(input, new = FALSE, ...) {
-  if (is.null(pkg_env$chat_model) || isTRUE(new)) {
+  if (is.null(pkg_env$chat_object) || isTRUE(new)) {
     initiate_llm(...)
   }
-  pkg_env$chat_model$chat(input)
+  pkg_env$chat_object$chat(input)
 }
 
 #' @rdname chat
 #' @importFrom ellmer live_browser
 #' @export
 chat_in_browser <- function(new = FALSE, ...) {
-  if (is.null(pkg_env$chat_model) || isTRUE(new)) {
+  if (is.null(pkg_env$chat_object) || isTRUE(new)) {
     initiate_llm(...)
   }
   cli::cat_boxx(c("Chat starten in browser.", "Gebruik Ctrl+C om af te sluiten."), 
                 padding = c(0, 1, 0, 1), border_style = "double")
-  live_browser(pkg_env$chat_model, quiet = TRUE)
+  live_browser(pkg_env$chat_object, quiet = TRUE)
 }
 
 #' @rdname chat
 #' @importFrom ellmer live_console
 #' @export
 chat_in_console <- function(new = FALSE, ...) {
-  if (is.null(pkg_env$chat_model) || isTRUE(new)) {
+  if (is.null(pkg_env$chat_object) || isTRUE(new)) {
     initiate_llm(...)
   }
   cli::cat_boxx(c("Chat starten in console.", "Gebruik \"\"\" voor multi-line input.", 
                   "Type 'Q' to af te sluiten."), padding = c(0, 1, 0, 1), border_style = "double")
-  live_console(pkg_env$chat_model, quiet = TRUE)
+  live_console(pkg_env$chat_object, quiet = TRUE)
+}
+
+#' @rdname chat
+#' @export
+get_chat_object <- function() {
+  if (is.null(pkg_env$chat_object)) {
+    message("No LLM initiated")
+  }
+  pkg_env$chat_object
 }
 
 #' @rdname chat
 #' @export
 get_provider <- function() {
-  if (is.null(pkg_env$chat_model)) {
+  if (is.null(pkg_env$chat_object)) {
     message("No LLM initiated")
   }
-  pkg_env$chat_model$get_provider()
+  pkg_env$chat_object$get_provider()
 }
 
 #' @rdname chat
 #' @export
 get_system_prompt <- function() {
-  if (is.null(pkg_env$chat_model)) {
+  if (is.null(pkg_env$chat_object)) {
     message("No LLM initiated")
   }
-  pkg_env$chat_model$get_system_prompt()
+  pkg_env$chat_object$get_system_prompt()
+}
+
+#' @rdname chat
+#' @export
+get_tools <- function() {
+  if (is.null(pkg_env$chat_object)) {
+    message("No LLM initiated")
+    return(invisible(NULL))
+  }
+  if (isTRUE(pkg_env$tools_supported)) {
+    pkg_env$chat_object$get_tools()
+  } else {
+    message("Tools are disabled for this model.")
+    invisible(NULL)
+  }
 }
 
 #' @rdname chat
 #' @export
 get_tokens <- function() {
-  if (is.null(pkg_env$chat_model)) {
+  if (is.null(pkg_env$chat_object)) {
     message("No LLM initiated")
   }
-  pkg_env$chat_model$get_tokens()
+  pkg_env$chat_object$get_tokens()
 }
-

@@ -3,21 +3,27 @@
 \name{chat}
 \alias{chat}
 \alias{initiate_llm}
+\alias{list_presets}
 \alias{new_chat}
 \alias{chat_in_browser}
 \alias{chat_in_console}
+\alias{get_chat_object}
 \alias{get_provider}
 \alias{get_system_prompt}
+\alias{get_tools}
 \alias{get_tokens}
-\title{Chat With Local LLM}
+\title{Chat With (Local) LLM}
 \usage{
 initiate_llm(
-  address = read_secret("llm.address"),
-  port = read_secret("llm.port"),
+  preset = read_secret("llm.default.preset"),
+  provider = NULL,
+  model = NULL,
+  url = NULL,
   system_prompt = read_secret("llm.system_prompt"),
-  model = read_secret("llm.model"),
   ...
 )
+
+list_presets()
 
 new_chat(input, ...)
 
@@ -27,28 +33,41 @@ chat_in_browser(new = FALSE, ...)
 
 chat_in_console(new = FALSE, ...)
 
+get_chat_object()
+
 get_provider()
 
 get_system_prompt()
 
+get_tools()
+
 get_tokens()
 }
 \arguments{
-\item{address}{Server address, defaults to local.}
+\item{preset}{Name of a preset defined under \code{llm.presets} in the secrets
+YAML. Defaults to \code{llm.default.preset}. Each preset must contain a
+\code{provider} (e.g. \code{"ollama"}, \code{"anthropic"}) and a \code{model} field; an
+optional \code{url} sets a non-default base URL (e.g. an internal Ollama
+server). Individual \code{provider}, \code{model}, and \code{url} arguments override
+the preset when supplied.}
 
-\item{port}{Server port, defaults to local.}
+\item{provider}{Override the provider from the preset.}
 
-\item{system_prompt}{A system prompt to set the behavior of the assistant.}
+\item{model}{Override the model from the preset.}
 
-\item{model}{The model to use for the chat.
-Use \code{models_ollama()} to see all options.}
+\item{url}{Override the base URL from the preset. Passed as \code{base_url} to
+the provider function; omit for providers with fixed endpoints
+(e.g. Anthropic).}
 
-\item{...}{Argument passed on to \code{\link[ellmer:chat_ollama]{ellmer::chat_ollama()}}.}
+\item{system_prompt}{System prompt text. Defaults to \code{llm.system_prompt}
+from the secrets file.}
+
+\item{...}{Arguments passed on to \code{\link[ellmer:chat-any]{ellmer::chat()}}.}
 
 \item{input}{Text for input.}
 
 \item{new}{Initiate new LLM instance.}
 }
 \description{
-Chat With Local LLM
+Chat With (Local) LLM
 }
