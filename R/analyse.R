@@ -59,21 +59,21 @@ llm_analyse <- function(data,
   data_summary <- .summarise_df_for_llm(data)
 
   question_block <- if (!is.null(question)) {
-    paste0("**Question:** ", question, "\n\n")
+    paste0("**Vraag:** ", question, "\n\n")
   } else {
     paste0(
-      "**Task:** Based on the data structure above, suggest 3-5 concrete analyses ",
-      "that would be meaningful for the Medical Epidemiology department at Certe. ",
-      "For each, briefly describe what it would show and give the R code to run it.\n\n"
+      "**Opdracht:** Stel op basis van bovenstaande datastructuur 3-5 concrete analyses voor ",
+      "die relevant zijn voor de afdeling Medische Epidemiologie van Certe. ",
+      "Beschrijf per analyse kort wat deze laat zien en geef de bijbehorende R-code.\n\n"
     )
   }
 
   prompt <- paste0(
     question_block,
     "**Data:**\n", data_summary, "\n\n",
-    "Use R with |> pipes and tidyverse/dplyr style. ",
-    "Use certeplot2::plot2() for visualisations. ",
-    "Wrap code in ```r code blocks."
+    "Gebruik R met |> pipes en tidyverse/dplyr-stijl. ",
+    "Gebruik plot2::plot2() voor visualisaties. ",
+    "Zet code in ```r codeblokken."
   )
 
   cl$chat(prompt)
@@ -93,24 +93,24 @@ llm_code <- function(data = NULL,
   style_instruction <- switch(
     style,
     tidyverse = paste0(
-      "Write R code using |> pipes and dplyr/tidyverse style. ",
-      "Use certeplot2::plot2() for plots, certedb::get_diver_data() for data retrieval. "
+      "Schrijf R-code met |> pipes en dplyr/tidyverse-stijl. ",
+      "Gebruik plot2::plot2() voor grafieken, certedb::get_diver_data() voor data-opvraging. "
     ),
-    base = "Write R code using base R without tidyverse dependencies. "
+    base = "Schrijf R-code met base R zonder tidyverse-afhankelijkheden. "
   )
 
   data_block <- if (!is.null(data) && is.data.frame(data)) {
-    paste0("**Available data:**\n", .summarise_df_for_llm(data), "\n\n")
+    paste0("**Beschikbare data:**\n", .summarise_df_for_llm(data), "\n\n")
   } else {
     ""
   }
 
   prompt <- paste0(
-    "Generate R code to accomplish the following task:\n\n> ", task, "\n\n",
+    "Genereer R-code voor de volgende opdracht:\n\n> ", task, "\n\n",
     data_block,
     style_instruction,
-    "Return only the R code in a ```r code block, with brief inline comments. ",
-    "Do not include prose outside the code block."
+    "Geef alleen de R-code in een ```r codeblok, met korte inline commentaren. ",
+    "Voeg geen lopende tekst toe buiten het codeblok."
   )
 
   cl$chat(prompt)
@@ -155,18 +155,18 @@ llm_suggest_plot <- function(data,
   data_summary <- .summarise_df_for_llm(data)
 
   goal_block <- if (!is.null(goal)) {
-    paste0("**Goal of the plot:** ", goal, "\n\n")
+    paste0("**Doel van de grafiek:** ", goal, "\n\n")
   } else {
     ""
   }
 
   prompt <- paste0(
-    "Based on the dataset below, suggest the most appropriate `plot2()` call ",
-    "(from the certeplot2 package). Choose the plot type, x, y, category, and ",
-    "facet arguments that best visualise the data for an epidemiological audience. ",
-    "Assume the data frame is named `data`. ",
-    "Return only the R code in a ```r code block. ",
-    "Do not execute the plot, only suggest the code for the user to review.\n\n",
+    "Stel op basis van onderstaande dataset de meest geschikte `plot2()`-aanroep voor ",
+    "(uit het plot2-pakket). Kies het plottype, x, y, category en ",
+    "facet-argumenten die de data het beste visualiseren voor een epidemiologisch publiek. ",
+    "Ga ervan uit dat het dataframe `data` heet. ",
+    "Geef alleen de R-code. ",
+    "Voer de plot niet uit, stel alleen de code voor ter beoordeling door de gebruiker.\n\n",
     goal_block,
     "**Data:**\n", data_summary
   )

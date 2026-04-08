@@ -158,34 +158,34 @@ llm_write_chunk <- function(code = NULL,
   if (!is.null(code) && !is.null(goal)) {
     # Improve existing code towards a stated goal
     prompt <- paste0(
-      "Improve the following R code chunk for use in an Rmd/Quarto document. ",
-      "Goal: ", goal, "\n\n",
-      "Use |> pipes and tidyverse/dplyr style. ",
-      "Use certeplot2::plot2() for visualisations. ",
-      "Return only the improved R code in a ```r code block, ",
-      "with brief inline English comments. ",
-      "Do not add prose outside the code block.\n\n",
+      "Verbeter de volgende R-codechunk voor gebruik in een Rmd/Quarto-document. ",
+      "Doel: ", goal, "\n\n",
+      "Gebruik |> pipes en tidyverse/dplyr-stijl. ",
+      "Gebruik plot2::plot2() voor visualisaties. ",
+      "Geef alleen de verbeterde R-code in een ```r codeblok, ",
+      "met korte inline commentaren. ",
+      "Voeg geen lopende tekst toe buiten het codeblok.\n\n",
       "```r\n", code, "\n```"
     )
   } else if (!is.null(goal)) {
     # Generate new code chunk from scratch
     prompt <- paste0(
-      "Write an R code chunk for use in an Rmd/Quarto document. ",
-      "Goal: ", goal, "\n\n",
-      "Use |> pipes and tidyverse/dplyr style. ",
-      "Use certeplot2::plot2() for visualisations and ",
-      "certedb::get_diver_data() for data retrieval where applicable. ",
-      "Return only the R code in a ```r code block, ",
-      "with brief inline English comments. ",
-      "Do not add prose outside the code block."
+      "Schrijf een R-codechunk voor gebruik in een Rmd/Quarto-document. ",
+      "Doel: ", goal, "\n\n",
+      "Gebruik |> pipes en tidyverse/dplyr-stijl. ",
+      "Gebruik plot2::plot2() voor visualisaties en ",
+      "certedb::get_diver_data() voor data-opvraging waar van toepassing. ",
+      "Geef alleen de R-code in een ```r codeblok, ",
+      "met korte inline commentaren. ",
+      "Voeg geen lopende tekst toe buiten het codeblok."
     )
   } else {
     # Review / clean up existing code, no specific goal
     prompt <- paste0(
-      "Review and improve the following R code chunk for use in an Rmd/Quarto document. ",
-      "Fix any issues, improve readability, and ensure it follows |> pipe and tidyverse style. ",
-      "Return only the improved R code in a ```r code block. ",
-      "Do not add prose outside the code block.\n\n",
+      "Beoordeel en verbeter de volgende R-codechunk voor gebruik in een Rmd/Quarto-document. ",
+      "Los eventuele problemen op, verbeter de leesbaarheid en zorg dat de code |> pipe- en tidyverse-stijl volgt. ",
+      "Geef alleen de verbeterde R-code in een ```r codeblok. ",
+      "Voeg geen lopende tekst toe buiten het codeblok.\n\n",
       "```r\n", code, "\n```"
     )
   }

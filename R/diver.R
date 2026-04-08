@@ -60,26 +60,26 @@ llm_diver_query <- function(description,
   schema_hint <- .format_diver_schema_hint()
 
   table_block <- if (!is.null(table)) {
-    paste0("The user expects to query the table: **", table, "**.\n\n")
+    paste0("De gebruiker verwacht de tabel op te vragen: **", table, "**.\n\n")
   } else {
     ""
   }
 
   columns_block <- if (!is.null(columns_hint) && length(columns_hint) > 0) {
-    paste0("Known column names available: ", paste(columns_hint, collapse = ", "), ".\n\n")
+    paste0("Bekende beschikbare kolomnamen: ", paste(columns_hint, collapse = ", "), ".\n\n")
   } else {
     ""
   }
 
   prompt <- paste0(
-    "Generate a valid `get_diver_data()` R function call that retrieves the ",
-    "following data:\n\n> ", description, "\n\n",
+    "Genereer een geldige `get_diver_data()` R-functieaanroep die de volgende ",
+    "data ophaalt:\n\n> ", description, "\n\n",
     table_block,
     columns_block,
-    "Use the schema information below to form the `where =` argument. ",
-    "Return only the R code, wrapped in a ```r code block. ",
-    "If a column name is uncertain, add a comment in the code noting the assumption. ",
-    "Do not include any prose outside the code block.\n\n",
+    "Gebruik de onderstaande schema-informatie om het `where =`-argument samen te stellen. ",
+    "Geef alleen de R-code, in een ```r codeblok. ",
+    "Voeg bij onzekere kolomnamen een commentaarregel toe met de aanname. ",
+    "Voeg geen lopende tekst toe buiten het codeblok.\n\n",
     schema_hint
   )
 

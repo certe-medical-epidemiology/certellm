@@ -21,11 +21,6 @@ pkg_env <- new.env(hash = FALSE)
 # - pkg_env$chat_object   - the active ellmer Chat R6 object
 # - pkg_env$chat_history - named list of saved turn snapshots (save_chat / restore_chat)
 
-# Internal: resolve a named preset from llm.presets in the secrets YAML.
-# Returns a list with required elements $provider and $model, plus optional
-# $url (full base URL, used as base_url for providers that support it, e.g.
-# Ollama with a non-default endpoint). Stops with an informative error when
-# the preset name is not found or required fields are missing.
 read_preset <- function(name) {
   if (!nzchar(name)) {
     stop("No preset specified and 'llm.default.preset' is not set in the secrets file.",
@@ -49,9 +44,6 @@ read_preset <- function(name) {
   p
 }
 
-# Internal: create an ellmer Chat object using ellmer::chat() with
-# "provider/model" routing. Passes base_url only when url is non-NULL so that
-# providers without a configurable endpoint (e.g. Anthropic) are not affected.
 #' @importFrom ellmer chat
 .create_chat_model <- function(provider, model, url, system_prompt, ...) {
   args <- c(
@@ -62,9 +54,8 @@ read_preset <- function(name) {
   do.call(ellmer::chat, args)
 }
 
-# Internal: clone the active LLM model with a fresh turn history so that
-# task-specific functions do not pollute the main conversation.
 .fresh_clone <- function(...) {
+  # clone the active LLM model with a fresh turn history so that task-specific functions do not pollute the main conversation.
   if (is.null(pkg_env$chat_object)) {
     initiate_llm(...)
   }
@@ -73,9 +64,6 @@ read_preset <- function(name) {
   cl
 }
 
-# Internal: produce a compact markdown summary of a data frame suitable for
-# injection into an LLM prompt. Targets ~2000 tokens. Never returns raw rows
-# that could expose patient-level data in a usable form.
 .summarise_df_for_llm <- function(df, max_rows_preview = 5, max_cols = 30) {
   nr <- nrow(df)
   nc <- ncol(df)
@@ -165,45 +153,42 @@ read_preset <- function(name) {
   )
 }
 
-# Internal: static Diver schema hint injected into diver-related LLM prompts.
-# Contains known table names, common column naming conventions, and syntax notes.
-# This is curated knowledge — updating it requires a package release.
 .format_diver_schema_hint <- function() {
   paste0(
-    "## Diver database\n\n",
-    "Diver is an internal columnar data warehouse at Certe. ",
-    "Data is retrieved with `get_diver_data(where = <R expression>)` from the ",
-    "`certedb` package. The `where` argument is an R expression (not SQL) that ",
-    "filters rows, evaluated against Diver column names directly.\n\n",
-    "### Common Diver column names\n",
-    "- `jaar` (integer): year of the record\n",
-    "- `maand` (integer): month (1\u201312)\n",
-    "- `kwartaal` (integer): quarter (1\u20134)\n",
-    "- `datum` (Date): exact date\n",
-    "- `regio` (character): region, e.g. `\"Groningen\"`, `\"Friesland\"`, `\"Drenthe\"`\n",
-    "- `ziekenhuis` / `instelling` (character): hospital or institution name\n",
-    "- `afdeling` (character): department or ward\n",
-    "- `organisme` (character): micro-organism name (Latin), e.g. `\"Escherichia coli\"`\n",
-    "- `agens` (character): pathogen or agent\n",
-    "- `materiaal` (character): sample material, e.g. `\"urine\"`, `\"bloed\"`\n",
-    "- `geslacht` (character): sex (`\"M\"` or `\"V\"`)\n",
-    "- `leeftijd` (numeric): patient age in years\n",
-    "- `leeftijdscategorie` (character): age group, e.g. `\"0-4\"`, `\"65+\"`\n",
-    "- `antibioticum` (character): antibiotic name\n",
-    "- `resistentie` (character): resistance result, e.g. `\"S\"`, `\"I\"`, `\"R\"`\n",
-    "- `uitslag` (character): test result or outcome\n",
-    "- `n` (integer): count (pre-aggregated tables)\n\n",
-    "### Example get_diver_data() calls\n",
+    "## Diver-database\n\n",
+    "Diver is een intern kolomgericht datawarehouse van Certe. ",
+    "Data wordt opgehaald met `get_diver_data(where = <R-expressie>)` uit het ",
+    "`certedb`-pakket. Het `where`-argument is een R-expressie (geen SQL) die ",
+    "rijen filtert, direct ge\u00EBvalueerd tegen Diver-kolomnamen.\n\n",
+    "### Veelvoorkomende Diver-kolomnamen\n",
+    "- `jaar` (integer): jaar van het record\n",
+    "- `maand` (integer): maand (1\u201312)\n",
+    "- `kwartaal` (integer): kwartaal (1\u20134)\n",
+    "- `datum` (Date): exacte datum\n",
+    "- `regio` (character): regio, bijv. `\"Groningen\"`, `\"Friesland\"`, `\"Drenthe\"`\n",
+    "- `ziekenhuis` / `instelling` (character): ziekenhuis- of instellingsnaam\n",
+    "- `afdeling` (character): afdeling\n",
+    "- `organisme` (character): micro-organismenaam (Latijn), bijv. `\"Escherichia coli\"`\n",
+    "- `agens` (character): pathogeen of verwekker\n",
+    "- `materiaal` (character): monstermateriaal, bijv. `\"urine\"`, `\"bloed\"`\n",
+    "- `geslacht` (character): geslacht (`\"M\"` of `\"V\"`)\n",
+    "- `leeftijd` (numeric): leeftijd in jaren\n",
+    "- `leeftijdscategorie` (character): leeftijdsgroep, bijv. `\"0-4\"`, `\"65+\"`\n",
+    "- `antibioticum` (character): antibioticumnaam\n",
+    "- `resistentie` (character): resistentieresultaat, bijv. `\"S\"`, `\"I\"`, `\"R\"`\n",
+    "- `uitslag` (character): testuitslag of uitkomst\n",
+    "- `n` (integer): telling (voorgeaggregeerde tabellen)\n\n",
+    "### Voorbeeld get_diver_data()-aanroepen\n",
     "```r\n",
-    "# All E. coli urine cultures from 2024\n",
+    "# Alle E. coli urinekweken uit 2024\n",
     "get_diver_data(where = jaar == 2024 & organisme == \"Escherichia coli\" & materiaal == \"urine\")\n\n",
-    "# Resistance data for Groningen, last 3 years\n",
+    "# Resistentiedata voor Groningen, laatste 3 jaar\n",
     "get_diver_data(where = jaar >= (as.integer(format(Sys.Date(), \"%Y\")) - 3) & regio == \"Groningen\")\n",
     "```\n\n",
-    "### Notes\n",
-    "- Column names are case-sensitive and lowercase.\n",
-    "- String values are case-sensitive; organism names use Latin notation.\n",
-    "- Date filtering uses `jaar`, `maand`, and `datum`; avoid `Sys.Date()` in `where` when possible.\n",
-    "- When the exact column name is uncertain, prefer generating a comment noting the assumption.\n"
+    "### Opmerkingen\n",
+    "- Kolomnamen zijn hoofdlettergevoelig en in kleine letters.\n",
+    "- Stringwaarden zijn hoofdlettergevoelig; organismenamen gebruiken Latijnse notatie.\n",
+    "- Datumfiltering gebruikt `jaar`, `maand` en `datum`; vermijd `Sys.Date()` in `where` waar mogelijk.\n",
+    "- Bij onzekerheid over de exacte kolomnaam, voeg bij voorkeur een commentaarregel toe met de aanname.\n"
   )
 }

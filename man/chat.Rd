@@ -69,5 +69,16 @@ from the secrets file.}
 \item{new}{Initiate new LLM instance.}
 }
 \description{
-Chat With (Local) LLM
+These functions initialise and interact with the active LLM, backed by \code{ellmer::chat()}. The connection is configured via named presets defined in the secrets YAML under \code{llm.presets}; individual \code{provider}, \code{model}, and \code{url} arguments override the preset when supplied.
+}
+\details{
+Functions:
+\itemize{
+\item \code{initiate_llm()} creates a new \code{ellmer} Chat object, appends user context to the system prompt when the user's name and job title are found in the secrets file, registers the session tools (\code{get_df_summary}, \code{list_objects}, \code{get_colnames}), and probes the model to verify actual tool support. Models that do not support tools are silently recreated without them, so the function always leaves a working instance. The active object is stored in \code{pkg_env$chat_object}.
+\item \code{list_presets()} prints all configured presets with their provider, model, and URL, marking the default.
+\item \code{chat()} sends a single message to the active LLM, initiating a new session first if none exists or if \code{new = TRUE}.
+\item \code{new_chat()} is a shorthand that always initiates a fresh session before sending the message.
+\item \code{chat_in_browser()} and \code{chat_in_console()} open an interactive session via \code{ellmer::live_browser()} and \code{ellmer::live_console()} respectively.
+\item \code{get_chat_object()}, \code{get_provider()}, \code{get_system_prompt()}, \code{get_tools()}, and \code{get_tokens()} are thin accessors that expose the underlying \code{ellmer} Chat object's state for inspection.
+}
 }

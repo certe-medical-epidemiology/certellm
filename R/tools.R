@@ -22,23 +22,23 @@ tool_plot2 <- tool(
   plot2::plot2,
   name = "plot2",
   description = paste0(
-    "Create a plot using plot2(), a convenience wrapper around ggplot2. ",
-    "Provide column names as strings for the plotting directions x, y, ",
-    "category, and facet. The data is supplied separately and must not be ",
-    "specified here. The function automatically determines sensible defaults ",
-    "for plot type, axis labels, datalabels, sorting, and theming. Only set ",
-    "arguments where you want to override the automatic behaviour. ",
-    "Supported plot types include: 'col' (column/bar), 'point', 'line', ",
+    "Maak een grafiek met plot2(), een convenience-wrapper rond ggplot2. ",
+    "Geef kolomnamen als strings op voor de plotrichtingen x, y, ",
+    "category en facet. De data wordt apart aangeleverd en mag hier niet ",
+    "worden opgegeven. De functie bepaalt automatisch verstandige standaarden ",
+    "voor plottype, aslabels, datalabels, sortering en thema. Stel alleen ",
+    "argumenten in waar je het automatische gedrag wilt overschrijven. ",
+    "Ondersteunde plottypes zijn: 'col' (kolom/staaf), 'point', 'line', ",
     "'boxplot', 'violin', 'histogram', 'jitter', 'area', 'ribbon', ",
     "'beeswarm', 'sankey', 'spider', 'dumbbell', 'linedot', 'back-to-back', ",
-    "'upset', 'barpercent', and 'blank'. Abbreviations are accepted (e.g. ",
-    "'c' for col, 'p' for point, 'l' for line, 'b' for boxplot, 'h' for ",
-    "histogram, 'j' for jitter, 'v' for violin, 'a' for area). ",
-    "Leave type as NULL to let plot2 determine the best type automatically. ",
-    "For y, you can specify a function call as a string such as 'n()', ",
-    "'median(column_name)', 'mean(column_name)', 'n_distinct(column_name)', ",
-    "or 'max(column_name)'. Multiple columns for y can be given as a vector ",
-    "of column name strings."
+    "'upset', 'barpercent' en 'blank'. Afkortingen zijn toegestaan (bijv. ",
+    "'c' voor col, 'p' voor point, 'l' voor line, 'b' voor boxplot, 'h' voor ",
+    "histogram, 'j' voor jitter, 'v' voor violin, 'a' voor area). ",
+    "Laat type als NULL om plot2 automatisch het beste type te laten bepalen. ",
+    "Voor y kun je een functieaanroep als string opgeven, zoals 'n()', ",
+    "'median(kolomnaam)', 'mean(kolomnaam)', 'n_distinct(kolomnaam)' ",
+    "of 'max(kolomnaam)'. Meerdere kolommen voor y kunnen als vector ",
+    "van kolomnaamstrings worden opgegeven."
   ),
   arguments = list(
     `...` = type_ignore(),
@@ -49,31 +49,31 @@ tool_plot2 <- tool(
     # core plotting directions
     x = type_string(
       paste0(
-        "Column name (as string) to map to the X-axis, e.g. 'species'. ",
-        "Leave NULL to let plot2 determine automatically."
+        "Kolomnaam (als string) voor de X-as, bijv. 'species'. ",
+        "Laat NULL om plot2 automatisch te laten bepalen."
       ),
       required = FALSE
     ),
     y = type_string(
       paste0(
-        "Column name or summary expression (as string) for the Y-axis. ",
-        "Examples: 'column_name', 'n()', 'median(age)', 'mean(value)', ",
-        "'n_distinct(patient_id)'. Leave NULL for automatic determination."
+        "Kolomnaam of samenvattingsexpressie (als string) voor de Y-as. ",
+        "Voorbeelden: 'kolomnaam', 'n()', 'median(leeftijd)', 'mean(waarde)', ",
+        "'n_distinct(patient_id)'. Laat NULL voor automatische bepaling."
       ),
       required = FALSE
     ),
     category = type_string(
       paste0(
-        "Column name (as string) for the colour/fill grouping (called ",
-        "'category' in plot2, equivalent to 'fill'/'colour' in ggplot2). ",
-        "Leave NULL for automatic determination or no grouping."
+        "Kolomnaam (als string) voor de kleur/vulling-groepering (in plot2 ",
+        "'category' genoemd, equivalent aan 'fill'/'colour' in ggplot2). ",
+        "Laat NULL voor automatische bepaling of geen groepering."
       ),
       required = FALSE
     ),
     facet = type_string(
       paste0(
-        "Column name (as string) for facetting (small multiples). ",
-        "Leave NULL for no facetting."
+        "Kolomnaam (als string) voor facetten (kleine veelvouden). ",
+        "Laat NULL voor geen facetten."
       ),
       required = FALSE
     ),
@@ -81,179 +81,179 @@ tool_plot2 <- tool(
     # plot type
     type = type_string(
       paste0(
-        "Type of plot. Common values: 'col', 'point', 'line', 'boxplot', ",
+        "Type grafiek. Veelgebruikte waarden: 'col', 'point', 'line', 'boxplot', ",
         "'violin', 'histogram', 'jitter', 'area', 'sankey', 'spider', ",
-        "'dumbbell', 'barpercent'. Abbreviations work: 'c', 'p', 'l', 'b', ",
-        "'h', 'j', 'v', 'a'. Leave NULL for automatic type detection."
+        "'dumbbell', 'barpercent'. Afkortingen werken: 'c', 'p', 'l', 'b', ",
+        "'h', 'j', 'v', 'a'. Laat NULL voor automatische typedetectie."
       ),
       required = FALSE
     ),
 
     # titles
     x.title = type_string(
-      "Title for the X-axis. Set to a custom string, or leave default.",
+      "Titel voor de X-as. Stel in als aangepaste string, of laat de standaard.",
       required = FALSE
     ),
     y.title = type_string(
-      "Title for the Y-axis. Set to a custom string, or leave default.",
+      "Titel voor de Y-as. Stel in als aangepaste string, of laat de standaard.",
       required = FALSE
     ),
     category.title = type_string(
-      "Title for the legend/category. Leave NULL for default.",
+      "Titel voor de legenda/categorie. Laat NULL voor standaard.",
       required = FALSE
     ),
     title = type_string(
-      "Main title of the plot. Supports markdown syntax (e.g. *italic*, **bold**).",
+      "Hoofdtitel van de grafiek. Ondersteunt markdown-syntax (bijv. *cursief*, **vet**).",
       required = FALSE
     ),
     subtitle = type_string(
-      "Subtitle below the main title. Supports markdown.",
+      "Ondertitel onder de hoofdtitel. Ondersteunt markdown.",
       required = FALSE
     ),
     caption = type_string(
-      "Caption shown at the bottom of the plot. Supports markdown.",
+      "Bijschrift onderaan de grafiek. Ondersteunt markdown.",
       required = FALSE
     ),
 
     # colour and appearance
     colour = type_string(
       paste0(
-        "Colour scheme. Can be a colour palette name such as 'viridis', ",
+        "Kleurenschema. Kan een kleurpaletnaam zijn zoals 'viridis', ",
         "'magma', 'inferno', 'plasma', 'cividis', 'rocket', 'mako', ",
-        "'turbo', or 'ggplot2' (default). Can also be a single colour name."
+        "'turbo' of 'ggplot2' (standaard). Kan ook een enkele kleurnaam zijn."
       ),
       required = FALSE
     ),
     colour_fill = type_string(
-      "Colour(s) for fill. Determined automatically if left blank.",
+      "Kleur(en) voor vulling. Wordt automatisch bepaald indien leeg.",
       required = FALSE
     ),
     colour_opacity = type_number(
-      "Opacity for colour/fill: 0 = solid (default), 1 = fully transparent.",
+      "Transparantie voor kleur/vulling: 0 = dekkend (standaard), 1 = volledig transparant.",
       required = FALSE
     ),
 
     # NA handling
     na.rm = type_boolean(
-      "Remove NA values from the plot. Default is FALSE.",
+      "Verwijder NA-waarden uit de grafiek. Standaard is FALSE.",
       required = FALSE
     ),
     na.replace = type_string(
-      "Character string to replace NA values with. Default is empty string.",
+      "Tekenreeks om NA-waarden mee te vervangen. Standaard is een lege string.",
       required = FALSE
     ),
 
     # X-axis settings
     x.sort = type_string(
       paste0(
-        "Sorting of the X-axis. Options: 'asc' or 'alpha' (ascending), ",
-        "'desc' (descending), 'freq' or 'freq-desc' (most frequent first), ",
-        "'freq-asc' (least frequent first), 'order' or 'inorder' (data order). ",
-        "NULL means default sorting."
+        "Sortering van de X-as. Opties: 'asc' of 'alpha' (oplopend), ",
+        "'desc' (aflopend), 'freq' of 'freq-desc' (meest voorkomend eerst), ",
+        "'freq-asc' (minst voorkomend eerst), 'order' of 'inorder' (datavolgorde). ",
+        "NULL betekent standaardsortering."
       ),
       required = FALSE
     ),
     x.max_items = type_integer(
       paste0(
-        "Maximum number of items on the X-axis. All remaining values are ",
-        "grouped and summarised. Use together with x.sort to show e.g. the ",
-        "top N most frequent values."
+        "Maximum aantal items op de X-as. Alle overige waarden worden ",
+        "gegroepeerd en samengevat. Gebruik samen met x.sort om bijv. de ",
+        "top N meest voorkomende waarden te tonen."
       ),
       required = FALSE
     ),
     x.lbl_angle = type_number(
       paste0(
-        "Counter-clockwise rotation angle for X-axis labels in degrees. ",
-        "Common values: 0 (horizontal, default), 45, 90 (vertical)."
+        "Rotatiehoek tegen de klok in voor X-aslabels in graden. ",
+        "Veelgebruikte waarden: 0 (horizontaal, standaard), 45, 90 (verticaal)."
       ),
       required = FALSE
     ),
     x.lbl_italic = type_boolean(
-      "Whether X-axis labels should be in italics. Default is FALSE.",
+      "Of X-aslabels cursief moeten zijn. Standaard is FALSE.",
       required = FALSE
     ),
     x.lbl_taxonomy = type_boolean(
       paste0(
-        "Whether to italicise microbial taxonomy names on the X-axis using ",
-        "the AMR package. Default is FALSE."
+        "Of microbi\u00EBle taxonomienamen op de X-as cursief moeten worden weergegeven ",
+        "met het AMR-pakket. Standaard is FALSE."
       ),
       required = FALSE
     ),
     x.remove = type_boolean(
-      "Remove X-axis labels and title. Default is FALSE.",
+      "Verwijder X-aslabels en -titel. Standaard is FALSE.",
       required = FALSE
     ),
     x.mic = type_boolean(
       paste0(
-        "Whether the X-axis should be formatted as MIC (minimum inhibitory ",
-        "concentration) values, dropping all factor levels and adding missing ",
-        "factors of 2. Default is FALSE."
+        "Of de X-as moet worden opgemaakt als MIC-waarden (minimale inhiberende ",
+        "concentratie), waarbij alle factorniveaus worden verwijderd en ontbrekende ",
+        "factoren van 2 worden toegevoegd. Standaard is FALSE."
       ),
       required = FALSE
     ),
     x.date_breaks = type_string(
       paste0(
-        "Breaks for date-type X-axis, e.g. '1 day', '2 weeks', '1 month', ",
-        "'1 year'. Determined automatically if NULL."
+        "Intervallen voor een datum-X-as, bijv. '1 day', '2 weeks', '1 month', ",
+        "'1 year'. Wordt automatisch bepaald bij NULL."
       ),
       required = FALSE
     ),
     x.date_labels = type_string(
       paste0(
-        "Date format for X-axis labels in Excel-style notation, e.g. ",
-        "'d mmmm yyyy', 'mmm yy'. Determined automatically if NULL."
+        "Datumnotatie voor X-aslabels in Excel-stijl, bijv. ",
+        "'d mmmm yyyy', 'mmm yy'. Wordt automatisch bepaald bij NULL."
       ),
       required = FALSE
     ),
     x.transform = type_string(
       paste0(
-        "Transformation for the X-axis. Options include: 'identity' ",
-        "(default), 'log', 'log2', 'log10', 'sqrt', 'reverse'."
+        "Transformatie voor de X-as. Opties zijn: 'identity' ",
+        "(standaard), 'log', 'log2', 'log10', 'sqrt', 'reverse'."
       ),
       required = FALSE
     ),
     x.zoom = type_boolean(
       paste0(
-        "Zoom X-axis to the data range instead of starting at 0. ",
-        "Default is FALSE."
+        "Zoom de X-as in op het databereik in plaats van bij 0 te beginnen. ",
+        "Standaard is FALSE."
       ),
       required = FALSE
     ),
     x.drop = type_boolean(
-      "Drop unused factor levels on the X-axis. Default is FALSE.",
+      "Verwijder ongebruikte factorniveaus op de X-as. Standaard is FALSE.",
       required = FALSE
     ),
 
     # Y-axis settings
     y.remove = type_boolean(
-      "Remove Y-axis labels and title. Default is FALSE.",
+      "Verwijder Y-aslabels en -titel. Standaard is FALSE.",
       required = FALSE
     ),
     y.percent = type_boolean(
-      "Format Y-axis labels as percentages. Default is FALSE.",
+      "Toon Y-aslabels als percentages. Standaard is FALSE.",
       required = FALSE
     ),
     y.transform = type_string(
       paste0(
-        "Transformation for the Y-axis. Options include: 'identity' ",
-        "(default), 'log', 'log2', 'log10', 'sqrt', 'reverse'."
+        "Transformatie voor de Y-as. Opties zijn: 'identity' ",
+        "(standaard), 'log', 'log2', 'log10', 'sqrt', 'reverse'."
       ),
       required = FALSE
     ),
     y.zoom = type_boolean(
-      "Zoom Y-axis to the data range instead of starting at 0. Default is FALSE.",
+      "Zoom de Y-as in op het databereik in plaats van bij 0 te beginnen. Standaard is FALSE.",
       required = FALSE
     ),
     y.age = type_boolean(
-      "Format Y-axis labels and breaks as ages in years. Default is FALSE.",
+      "Toon Y-aslabels en -intervallen als leeftijden in jaren. Standaard is FALSE.",
       required = FALSE
     ),
     y.24h = type_boolean(
-      "Format Y-axis labels and breaks as 24-hour time. Default is FALSE.",
+      "Toon Y-aslabels en -intervallen als 24-uursnotatie. Standaard is FALSE.",
       required = FALSE
     ),
     y.position = type_enum(
-      "Position of the Y-axis.",
+      "Positie van de Y-as.",
       values = c("left", "right"),
       required = FALSE
     ),
@@ -261,158 +261,158 @@ tool_plot2 <- tool(
     # category settings
     category.focus = type_string(
       paste0(
-        "A value of the category to highlight, greying out all other values. ",
-        "Can be a category label string."
+        "Een waarde van de categorie om uit te lichten, waarbij alle andere waarden grijs worden. ",
+        "Kan een categorielabel als string zijn."
       ),
       required = FALSE
     ),
     category.sort = type_boolean(
-      "Sort the category values. Default is TRUE.",
+      "Sorteer de categoriewaarden. Standaard is TRUE.",
       required = FALSE
     ),
     category.max_items = type_integer(
-      "Maximum number of category items. Remaining values are grouped.",
+      "Maximum aantal categorie-items. Overige waarden worden gegroepeerd.",
       required = FALSE
     ),
     category.type = type_string(
       paste0(
-        "Aesthetic type for the category. Options: 'colour' (default), ",
+        "Esthetisch type voor de categorie. Opties: 'colour' (standaard), ",
         "'shape', 'size', 'linetype', 'linewidth', 'alpha'. ",
-        "Multiple can be combined with a comma."
+        "Meerdere kunnen gecombineerd worden met een komma."
       ),
       required = FALSE
     ),
 
     # facet settings
     facet.nrow = type_integer(
-      "Number of rows for facet layout. NULL for automatic.",
+      "Aantal rijen voor de facetindeling. NULL voor automatisch.",
       required = FALSE
     ),
     facet.sort = type_boolean(
-      "Sort facet values. Default is TRUE.",
+      "Sorteer facetwaarden. Standaard is TRUE.",
       required = FALSE
     ),
     facet.fixed_y = type_boolean(
       paste0(
-        "Whether all facet panels should share the same Y-axis limits. ",
-        "Determined automatically by default."
+        "Of alle facetpanelen dezelfde Y-aslimieten moeten delen. ",
+        "Wordt standaard automatisch bepaald."
       ),
       required = FALSE
     ),
     facet.relative = type_boolean(
-      "Use relative (proportional) values per facet. Default is FALSE.",
+      "Gebruik relatieve (proportionele) waarden per facet. Standaard is FALSE.",
       required = FALSE
     ),
 
     # datalabels
     datalabels = type_boolean(
       paste0(
-        "Show data labels on the plot. Default is TRUE for column-type plots. ",
-        "Set to FALSE to hide them."
+        "Toon datalabels op de grafiek. Standaard is TRUE voor kolomgrafieken. ",
+        "Stel in op FALSE om ze te verbergen."
       ),
       required = FALSE
     ),
     datalabels.format = type_string(
       paste0(
-        "Format for data labels. Use '%n' for count, '%p' for percentage. ",
-        "Example: '%n (%p)'. Default is '%n'."
+        "Opmaak voor datalabels. Gebruik '%n' voor telling, '%p' voor percentage. ",
+        "Voorbeeld: '%n (%p)'. Standaard is '%n'."
       ),
       required = FALSE
     ),
     datalabels.colour = type_string(
-      "Colour for data label text. Default is 'grey25'.",
+      "Kleur voor datalabeltekst. Standaard is 'grey25'.",
       required = FALSE
     ),
     datalabels.size = type_number(
-      "Font size for data labels.",
+      "Lettergrootte voor datalabels.",
       required = FALSE
     ),
 
     # layout and stacking
     stacked = type_boolean(
-      "Stack the bars/areas. Default is FALSE.",
+      "Stapel de staven/gebieden. Standaard is FALSE.",
       required = FALSE
     ),
     stacked_fill = type_boolean(
       paste0(
-        "Stack bars to 100%% (proportional stacking). Default is FALSE. ",
-        "Overrides 'stacked' if TRUE."
+        "Stapel staven tot 100%% (proportionele stapeling). Standaard is FALSE. ",
+        "Overschrijft 'stacked' indien TRUE."
       ),
       required = FALSE
     ),
     horizontal = type_boolean(
-      "Flip the plot 90 degrees (horizontal bars). Default is FALSE.",
+      "Draai de grafiek 90 graden (horizontale staven). Standaard is FALSE.",
       required = FALSE
     ),
 
     # smoothing
     smooth = type_boolean(
       paste0(
-        "Add a smooth/trend line. Default is NULL (FALSE for most types, ",
-        "TRUE for histograms to show density)."
+        "Voeg een smooth/trendlijn toe. Standaard is NULL (FALSE voor de meeste types, ",
+        "TRUE voor histogrammen om dichtheid te tonen)."
       ),
       required = FALSE
     ),
     smooth.method = type_string(
       paste0(
-        "Smoothing method: 'loess' (default for small n), 'lm', 'glm', ",
-        "'gam'. NULL for automatic."
+        "Smoothingmethode: 'loess' (standaard bij kleine n), 'lm', 'glm', ",
+        "'gam'. NULL voor automatisch."
       ),
       required = FALSE
     ),
     smooth.se = type_boolean(
-      "Show confidence interval around smooth. Default is TRUE.",
+      "Toon betrouwbaarheidsinterval rond de smooth. Standaard is TRUE.",
       required = FALSE
     ),
 
     # geom appearance
     size = type_number(
-      "Size of the geom (point size, etc.). NULL for automatic.",
+      "Grootte van het geom (puntgrootte, etc.). NULL voor automatisch.",
       required = FALSE
     ),
     linetype = type_integer(
-      "Linetype: 1 = solid (default), 2 = dashed, 3 = dotted, 4 = dotdash.",
+      "Lijntype: 1 = doorgetrokken (standaard), 2 = gestreept, 3 = gestippeld, 4 = stippelstreep.",
       required = FALSE
     ),
     linewidth = type_number(
-      "Line width. NULL for automatic defaults.",
+      "Lijndikte. NULL voor automatische standaarden.",
       required = FALSE
     ),
     binwidth = type_number(
-      "Bin width for histograms. NULL for automatic.",
+      "Binbreedte voor histogrammen. NULL voor automatisch.",
       required = FALSE
     ),
     width = type_number(
-      "Width of the geom (bars, boxes, etc.). NULL for automatic.",
+      "Breedte van het geom (staven, boxen, etc.). NULL voor automatisch.",
       required = FALSE
     ),
 
     # legend
     legend.position = type_enum(
-      "Position of the legend.",
+      "Positie van de legenda.",
       values = c("top", "right", "bottom", "left", "none"),
       required = FALSE
     ),
     legend.reverse = type_boolean(
-      "Reverse the legend order. Default is FALSE.",
+      "Keer de legendavolgorde om. Standaard is FALSE.",
       required = FALSE
     ),
     legend.nrow = type_integer(
-      "Number of rows in the legend. NULL for automatic.",
+      "Aantal rijen in de legenda. NULL voor automatisch.",
       required = FALSE
     ),
 
     # sankey-specific
     sankey.alpha = type_number(
-      "Alpha (transparency) of flows in a Sankey plot. Default is 0.5.",
+      "Alpha (transparantie) van stromen in een Sankey-grafiek. Standaard is 0.5.",
       required = FALSE
     ),
 
     # overall zoom
     zoom = type_boolean(
       paste0(
-        "Zoom both axes to the data range, i.e. neither axis starts at 0. ",
-        "Default is FALSE."
+        "Zoom beide assen in op het databereik, d.w.z. geen van beide assen begint bij 0. ",
+        "Standaard is FALSE."
       ),
       required = FALSE
     ),
@@ -420,8 +420,8 @@ tool_plot2 <- tool(
     # separator
     sep = type_string(
       paste0(
-        "Separator character when multiple columns are combined into one ",
-        "direction. Default is ' / '."
+        "Scheidingsteken wanneer meerdere kolommen in \u00E9\u00E9n richting worden gecombineerd. ",
+        "Standaard is ' / '."
       ),
       required = FALSE
     ),
@@ -429,30 +429,30 @@ tool_plot2 <- tool(
     # theming
     font = type_string(
       paste0(
-        "Font family. Can be any installed system font or Google Font name. ",
-        "NULL for default."
+        "Lettertypefamilie. Kan elk ge\u00EFnstalleerd systeemlettertype of Google Font-naam zijn. ",
+        "NULL voor standaard."
       ),
       required = FALSE
     ),
     text_factor = type_number(
-      "Scaling factor for all text in the plot. Default is 1.",
+      "Schaalfactor voor alle tekst in de grafiek. Standaard is 1.",
       required = FALSE
     ),
     theme = type_string(
       paste0(
-        "ggplot2 theme name as string, e.g. 'theme_minimal2' (default), ",
-        "'theme_bw', 'theme_classic', 'theme_minimal'. NULL for ggplot2 default."
+        "ggplot2-themanaam als string, bijv. 'theme_minimal2' (standaard), ",
+        "'theme_bw', 'theme_classic', 'theme_minimal'. NULL voor ggplot2-standaard."
       ),
       required = FALSE
     ),
     background = type_string(
-      "Background colour of the entire plot. Default is 'white'.",
+      "Achtergrondkleur van de hele grafiek. Standaard is 'white'.",
       required = FALSE
     ),
     markdown = type_boolean(
       paste0(
-        "Enable markdown in titles and labels (e.g. *italic*, **bold**). ",
-        "Default is TRUE."
+        "Schakel markdown in voor titels en labels (bijv. *cursief*, **vet**). ",
+        "Standaard is TRUE."
       ),
       required = FALSE
     ),

@@ -37,14 +37,14 @@ tool_get_df_summary <- tool(
   },
   name = "get_df_summary",
   description = paste0(
-    "Get a structured summary of a data frame that exists in the user's R session. ",
-    "Use this when the user mentions a dataset by name (e.g. 'data', 'data_resistentie'). ",
-    "Returns column names, types, value distributions, and a small row preview. ",
-    "Never returns raw patient-level data in usable form."
+    "Haal een gestructureerde samenvatting op van een dataframe in de R-sessie van de gebruiker. ",
+    "Gebruik dit wanneer de gebruiker een dataset bij naam noemt (bijv. 'data', 'data_resistentie'). ",
+    "Geeft kolomnamen, typen, waardeverdeling en een klein rijvoorbeeld terug. ",
+    "Geeft nooit ruwe pati\u00EBntgegevens terug in bruikbare vorm."
   ),
   arguments = list(
     object_name = type_string(
-      "The name of the R object (data frame) to summarise, as it appears in the global environment."
+      "De naam van het R-object (dataframe) om samen te vatten, zoals het in de globale omgeving staat."
     )
   )
 )
@@ -75,9 +75,9 @@ tool_list_objects <- tool(
   },
   name = "list_objects",
   description = paste0(
-    "List all objects currently in the user's R global environment, ",
-    "with their types and dimensions. Use this to discover what data is available ",
-    "before asking the user to specify a data frame name."
+    "Geef een overzicht van alle objecten in de globale R-omgeving van de gebruiker, ",
+    "met hun typen en dimensies. Gebruik dit om te ontdekken welke data beschikbaar is ",
+    "voordat je de gebruiker vraagt een dataframenaam op te geven."
   ),
   arguments = list()
 )
@@ -97,13 +97,13 @@ tool_get_colnames <- tool(
   },
   name = "get_colnames",
   description = paste0(
-    "Get the column names of a data frame in the user's R global environment. ",
-    "Use this for a quick column overview when a full summary is not needed, ",
-    "e.g. when the user asks which columns are available for a plot."
+    "Haal de kolomnamen op van een dataframe in de globale R-omgeving van de gebruiker. ",
+    "Gebruik dit voor een snel kolomoverzicht wanneer een volledige samenvatting niet nodig is, ",
+    "bijv. wanneer de gebruiker vraagt welke kolommen beschikbaar zijn voor een grafiek."
   ),
   arguments = list(
     object_name = type_string(
-      "The name of the data frame in the global environment."
+      "De naam van het dataframe in de globale omgeving."
     )
   )
 )
