@@ -120,7 +120,7 @@ test_that("llm_review_document() works with every valid focus value", {
 
   for (f in c("all", "language", "structure", "completeness")) {
     result <- llm_review_document(text = "Some text.", focus = f)
-    expect_type(result, "character", info = paste("focus =", f))
+    expect_true(is.character(result), info = paste("focus =", f))
   }
 })
 
@@ -182,7 +182,7 @@ test_that("llm_write_section() works with every valid style value", {
 
   for (s in c("report", "presentation", "article")) {
     result <- llm_write_section("Discussion", style = s)
-    expect_type(result, "character", info = paste("style =", s))
+    expect_true(is.character(result), info = paste("style =", s))
   }
 })
 
@@ -316,7 +316,7 @@ test_that("llm_describe() works with every valid tone value", {
 
   for (t in c("formal", "accessible")) {
     result <- llm_describe(sample_df, tone = t)
-    expect_type(result, "character", info = paste("tone =", t))
+    expect_true(is.character(result), info = paste("tone =", t))
   }
 })
 
@@ -326,7 +326,7 @@ test_that("llm_describe() works with every valid length value", {
 
   for (l in c("short", "medium", "long")) {
     result <- llm_describe(sample_df, length = l)
-    expect_type(result, "character", info = paste("length =", l))
+    expect_true(is.character(result), info = paste("length =", l))
   }
 })
 

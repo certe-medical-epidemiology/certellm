@@ -8,6 +8,12 @@
 # Tests for internal universal helpers: like(), %like%, %unlike%, concat(),
 # and read_secret().  None of these require an LLM.
 
+# Import unexported infix operators so they can be used with standard infix
+# syntax inside tests (under R CMD check only exported symbols are on the
+# search path; operators need to be locally defined here).
+`%like%`   <- certellm:::`%like%`
+`%unlike%` <- certellm:::`%unlike%`
+
 # ---------------------------------------------------------------------------
 # like()
 # ---------------------------------------------------------------------------
