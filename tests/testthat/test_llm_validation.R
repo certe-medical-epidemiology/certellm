@@ -25,12 +25,12 @@ sample_df <- data.frame(
 # Because on.exit registers cleanup in the *current* function frame, tests
 # that call this must also call on.exit themselves (see pattern below).
 .set_mock <- function() {
-  certellm:::pkg_env$chat_object    <- make_mock_chat()
-  certellm:::pkg_env$tools_supported <- TRUE
+  .pkg_env$chat_object    <- make_mock_chat()
+  .pkg_env$tools_supported <- TRUE
 }
 .clear_mock <- function() {
-  certellm:::pkg_env$chat_object    <- NULL
-  certellm:::pkg_env$tools_supported <- NULL
+  .pkg_env$chat_object    <- NULL
+  .pkg_env$tools_supported <- NULL
 }
 
 # ===========================================================================

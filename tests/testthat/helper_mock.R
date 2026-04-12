@@ -7,6 +7,15 @@
 
 # Shared helpers loaded automatically by testthat before all test files.
 
+# One-time reference to certellm's internal state environment.
+# R environments are reference objects: mutations through .pkg_env are
+# immediately visible inside the package and vice-versa.  We capture it here
+# rather than using `certellm:::pkg_env$x <- y` in tests because the
+# assignment form (`:::pkg_env$x <- y`) triggers R's replacement-function
+# machinery, which evaluates `certellm` as a variable and fails with
+# "object 'certellm' not found".
+.pkg_env <- certellm:::pkg_env
+
 #' Create a lightweight mock Chat object
 #'
 #' Returns an environment-based stand-in for an ellmer Chat R6 object that
