@@ -164,11 +164,13 @@ test_that(".summarise_df_for_llm() truncates very wide data frames (> max_cols)"
 })
 
 test_that(".summarise_df_for_llm() respects custom max_cols", {
+  # nc must be >= 20 because the truncation logic uses names(df)[seq_len(20)];
+  # use 25 columns with max_cols = 21 so truncation is triggered safely.
   wide_df <- as.data.frame(
-    setNames(lapply(seq_len(10), function(i) 1:5), paste0("col", seq_len(10)))
+    setNames(lapply(seq_len(25), function(i) 1:5), paste0("col", seq_len(25)))
   )
-  result <- certellm:::.summarise_df_for_llm(wide_df, max_cols = 5)
-  expect_match(result, "10 columns total")
+  result <- certellm:::.summarise_df_for_llm(wide_df, max_cols = 21)
+  expect_match(result, "25 columns total")
 })
 
 test_that(".summarise_df_for_llm() handles a single-row data frame", {
@@ -184,8 +186,9 @@ test_that(".summarise_df_for_llm() handles a single-column data frame", {
 })
 
 test_that(".summarise_df_for_llm() handles all-NA numeric column", {
+  # min()/mean()/max() on all-NA emit warnings; suppress them here.
   df <- data.frame(x = rep(NA_real_, 5))
-  result <- certellm:::.summarise_df_for_llm(df)
+  result <- suppressWarnings(certellm:::.summarise_df_for_llm(df))
   expect_type(result, "character")
   expect_match(result, "NA: 5")
 })
@@ -264,7 +267,10 @@ test_that("read_preset() errors when secrets file has no 'llm.presets' key", {
     if (is.na(old)) Sys.unsetenv("secrets_file") else Sys.setenv(secrets_file = old)
   }, add = TRUE)
 
-  expect_error(certellm:::read_preset("anything"), "No presets found")
+  # read_secret() emits a warning when "llm.presets" is absent; suppress it.
+  suppressWarnings(
+    expect_error(certellm:::read_preset("anything"), "No presets found")
+  )
 })
 
 test_that("read_preset() errors when the named preset does not exist", {
