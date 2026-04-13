@@ -20,6 +20,8 @@ initiate_llm(
   model = NULL,
   url = NULL,
   system_prompt = read_secret("llm.system_prompt"),
+  user_name = read_secret(paste0("user.", Sys.info()["user"], ".fullname")),
+  user_jobtitle = read_secret(paste0("user.", Sys.info()["user"], ".jobtitle")),
   ...
 )
 
@@ -61,6 +63,8 @@ the provider function; omit for providers with fixed endpoints
 
 \item{system_prompt}{System prompt text. Defaults to \code{llm.system_prompt}
 from the secrets file.}
+
+\item{user_name, user_jobtitle}{Name and job title of the person working with the LLM.}
 
 \item{...}{Arguments passed on to \code{\link[ellmer:chat-any]{ellmer::chat()}}.}
 
