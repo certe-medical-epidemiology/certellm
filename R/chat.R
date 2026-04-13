@@ -34,6 +34,7 @@
 #'   (e.g. Anthropic).
 #' @param system_prompt System prompt text. Defaults to `llm.system_prompt`
 #'   from the secrets file.
+#' @param user_name,user_jobtitle Name and job title of the person working with the LLM.
 #' @param new Initiate new LLM instance.
 #' @param ... Arguments passed on to [ellmer::chat()].
 #' @details
@@ -54,6 +55,8 @@ initiate_llm <- function(preset = read_secret("llm.default.preset"),
                          model = NULL,
                          url = NULL,
                          system_prompt = read_secret("llm.system_prompt"),
+                         user_name = read_secret(paste0("user.", Sys.info()["user"], ".fullname")),
+                         user_jobtitle = read_secret(paste0("user.", Sys.info()["user"], ".jobtitle")),
                          ...) {
   # Resolve connection settings: preset provides the base, explicit arguments
   # override individual fields when supplied.
@@ -63,8 +66,6 @@ initiate_llm <- function(preset = read_secret("llm.default.preset"),
   resolved_url      <- if (!is.null(url))      url      else preset_config$url  # may be NULL
   
   # Add user info
-  user_name <- read_secret(paste0("user.", Sys.info()["user"], ".fullname"))
-  user_jobtitle <- read_secret(paste0("user.", Sys.info()["user"], ".jobtitle")) 
   if (user_name != "" && user_jobtitle != "") {
     user_context <- paste0(
       "\n## Over de gebruiker\n",
@@ -83,9 +84,9 @@ initiate_llm <- function(preset = read_secret("llm.default.preset"),
   # a minimal probe to confirm actual tool support. On failure the model is
   # recreated without tools, so initiate_llm() always leaves a working instance.
   tools_registered <- tryCatch({
-    # if (requireNamespace("plot2", quietly = TRUE)) {
-    #   pkg_env$chat_object$register_tool(tool_plot2)
-    # }
+    if (requireNamespace("plot2", quietly = TRUE)) {
+      pkg_env$chat_object$register_tool(tool_plot2)
+    }
     pkg_env$chat_object$register_tool(tool_get_df_summary)
     pkg_env$chat_object$register_tool(tool_list_objects)
     pkg_env$chat_object$register_tool(tool_get_colnames)

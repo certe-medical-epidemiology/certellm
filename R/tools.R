@@ -17,6 +17,92 @@
 #  useful, but it comes WITHOUT ANY WARRANTY OR LIABILITY.              #
 # ===================================================================== #
 
+#' @importFrom ellmer tool type_string
+tool_get_df_summary <- tool(
+  function(object_name) {
+    if (!exists(object_name, envir = .GlobalEnv, inherits = FALSE)) {
+      return(paste0("Object '", object_name, "' is niet gevonden in de globale omgeving."))
+    }
+    obj <- get(object_name, envir = .GlobalEnv)
+    if (!is.data.frame(obj)) {
+      return(paste0("'", object_name, "' is geen data frame (klasse: ",
+                    paste(class(obj), collapse = "/"), ")."))
+    }
+    .summarise_df_for_llm(obj)
+  },
+  name = "get_df_summary",
+  description = paste0(
+    "Geef een gestructureerde samenvatting van een data frame dat aanwezig is in de R-sessie van de gebruiker. ",
+    "Gebruik dit wanneer de gebruiker een dataset bij naam noemt (bijv. 'data', 'data_resistentie'). ",
+    "Geeft kolomnamen, typen, waardeverdeling en een beperkt rij-voorbeeld terug. ",
+    "Geeft nooit ruwe patientgegevens in bruikbare vorm terug."
+  ),
+  arguments = list(
+    object_name = type_string(
+      "De naam van het R-object (data frame) dat samengevat moet worden, zoals het voorkomt in de globale omgeving."
+    )
+  )
+)
+
+#' @importFrom ellmer tool
+tool_list_objects <- tool(
+  function() {
+    objs <- ls(envir = .GlobalEnv)
+    if (length(objs) == 0) {
+      return("De globale omgeving bevat geen objecten.")
+    }
+    classes <- vapply(objs, function(x) {
+      tryCatch(paste(class(get(x, envir = .GlobalEnv)), collapse = "/"),
+               error = function(e) "?")
+    }, character(1))
+    sizes <- vapply(objs, function(x) {
+      tryCatch({
+        obj <- get(x, envir = .GlobalEnv)
+        if (is.data.frame(obj)) {
+          paste0(nrow(obj), " x ", ncol(obj))
+        } else {
+          paste0(length(obj), " elementen")
+        }
+      }, error = function(e) "?")
+    }, character(1))
+    lines <- paste0("- `", objs, "` (", classes, ", ", sizes, ")")
+    paste0("**Objecten in de globale omgeving:**\n", paste(lines, collapse = "\n"))
+  },
+  name = "list_objects",
+  description = paste0(
+    "Geef een overzicht van alle objecten die zich momenteel in de globale R-omgeving van de gebruiker bevinden, ",
+    "met hun typen en dimensies. Gebruik dit om te ontdekken welke gegevens beschikbaar zijn ",
+    "voordat de gebruiker gevraagd wordt een data frame-naam op te geven."
+  ),
+  arguments = list()
+)
+
+#' @importFrom ellmer tool type_string
+tool_get_colnames <- tool(
+  function(object_name) {
+    if (!exists(object_name, envir = .GlobalEnv, inherits = FALSE)) {
+      return(paste0("Object '", object_name, "' is niet gevonden in de globale omgeving."))
+    }
+    obj <- get(object_name, envir = .GlobalEnv)
+    if (!is.data.frame(obj)) {
+      return(paste0("'", object_name, "' is geen data frame."))
+    }
+    paste0("Kolommen van `", object_name, "` (", ncol(obj), " in totaal):\n",
+           paste(names(obj), collapse = ", "))
+  },
+  name = "get_colnames",
+  description = paste0(
+    "Geef de kolomnamen van een data frame in de globale R-omgeving van de gebruiker. ",
+    "Gebruik dit voor een snel kolomoverzicht wanneer een volledige samenvatting niet nodig is, ",
+    "bijvoorbeeld wanneer de gebruiker vraagt welke kolommen beschikbaar zijn voor een grafiek."
+  ),
+  arguments = list(
+    object_name = type_string(
+      "De naam van het data frame in de globale omgeving."
+    )
+  )
+)
+
 #' @importFrom ellmer tool type_string type_enum type_number type_integer type_boolean type_array type_ignore
 tool_plot2 <- tool(
   plot2::plot2,
