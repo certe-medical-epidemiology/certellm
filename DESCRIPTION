@@ -1,6 +1,6 @@
 Package: certellm
 Title: A Certe R Package for working with large language models
-Version: 0.2.3
+Version: 0.2.4
 Authors@R: c(
   person(given = c("Matthijs", "S."), 
          family = "Berends",
