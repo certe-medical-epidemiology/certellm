@@ -1,6 +1,6 @@
 Package: certellm
 Title: A Certe R Package for working with large language models
-Version: 0.2.4
+Version: 0.2.5
 Authors@R: c(
   person(given = c("Matthijs", "S."), 
          family = "Berends",
@@ -27,7 +27,7 @@ Imports:
   yaml
 Suggests:
   rlang,
-  plot2,
+  plot2 (>= 1.99.1),
   testthat (>= 2.0.0)
 Remotes:
   msberends/plot2

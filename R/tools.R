@@ -103,9 +103,12 @@ tool_get_colnames <- tool(
   )
 )
 
-if (requireNamespace("plot2", quietly = TRUE)) {
-  #' @importFrom ellmer tool type_string type_enum type_number type_integer type_boolean type_ignore
-  tool_plot2 <- tool(
+# Builds the plot2 tool. ellmer::tool() validates `arguments` against the
+# formals of plot2::plot2(), so this must be kept in line with plot2's
+# arguments (see tests/testthat/test_tools.R).
+#' @importFrom ellmer tool type_string type_enum type_number type_integer type_boolean type_ignore
+build_tool_plot2 <- function() {
+  tool(
     plot2::plot2,
     name = "plot2",
     description = paste0(
@@ -217,7 +220,7 @@ if (requireNamespace("plot2", quietly = TRUE)) {
         "Kleur(en) voor vulling. Wordt automatisch bepaald indien leeg.",
         required = FALSE
       ),
-      colour_opacity = type_number(
+      colour_transparency = type_number(
         "Transparantie voor kleur/vulling: 0 = dekkend (standaard), 1 = volledig transparant.",
         required = FALSE
       ),
@@ -250,34 +253,19 @@ if (requireNamespace("plot2", quietly = TRUE)) {
         ),
         required = FALSE
       ),
-      x.lbl_angle = type_number(
+      x.label_angle = type_number(
         paste0(
           "Rotatiehoek tegen de klok in voor X-aslabels in graden. ",
           "Veelgebruikte waarden: 0 (horizontaal, standaard), 45, 90 (verticaal)."
         ),
         required = FALSE
       ),
-      x.lbl_italic = type_boolean(
+      x.label_italic = type_boolean(
         "Of X-aslabels cursief moeten zijn. Standaard is FALSE.",
-        required = FALSE
-      ),
-      x.lbl_taxonomy = type_boolean(
-        paste0(
-          "Of microbi\u00EBle taxonomienamen op de X-as cursief moeten worden weergegeven ",
-          "met het AMR-pakket. Standaard is FALSE."
-        ),
         required = FALSE
       ),
       x.remove = type_boolean(
         "Verwijder X-aslabels en -titel. Standaard is FALSE.",
-        required = FALSE
-      ),
-      x.mic = type_boolean(
-        paste0(
-          "Of de X-as moet worden opgemaakt als MIC-waarden (minimale inhiberende ",
-          "concentratie), waarbij alle factorniveaus worden verwijderd en ontbrekende ",
-          "factoren van 2 worden toegevoegd. Standaard is FALSE."
-        ),
         required = FALSE
       ),
       x.date_breaks = type_string(
@@ -416,6 +404,15 @@ if (requireNamespace("plot2", quietly = TRUE)) {
         "Lettergrootte voor datalabels.",
         required = FALSE
       ),
+      datalabels.percent_by = type_enum(
+        paste0(
+          "Groep waarbinnen de '%p'-percentages van datalabels.format optellen tot 100%. ",
+          "'x' (standaard): binnen elke X-waarde en facet; 'category': binnen elke ",
+          "categorie en facet; 'facet': binnen elk facet; 'total': over alle data."
+        ),
+        values = c("x", "category", "facet", "total"),
+        required = FALSE
+      ),
       
       # layout and stacking
       stacked = type_boolean(
@@ -477,6 +474,13 @@ if (requireNamespace("plot2", quietly = TRUE)) {
       ),
       
       # legend
+      legend = type_boolean(
+        paste0(
+          "Toon (TRUE) of verberg (FALSE) de legenda. Standaard (NULL) wordt de ",
+          "legenda getoond als de grafiek een categorie heeft."
+        ),
+        required = FALSE
+      ),
       legend.position = type_enum(
         "Positie van de legenda.",
         values = c("top", "right", "bottom", "left", "none"),
@@ -492,7 +496,7 @@ if (requireNamespace("plot2", quietly = TRUE)) {
       ),
       
       # sankey-specific
-      sankey.alpha = type_number(
+      sankey_alpha = type_number(
         "Alpha (transparantie) van stromen in een Sankey-grafiek. Standaard is 0.5.",
         required = FALSE
       ),
@@ -553,19 +557,19 @@ if (requireNamespace("plot2", quietly = TRUE)) {
       subtitle.linelength = type_ignore(),
       subtitle.colour = type_ignore(),
       facet.position = type_ignore(),
-      facet.fill = type_ignore(),
+      facet.colour_fill = type_ignore(),
       facet.bold = type_ignore(),
       facet.italic = type_ignore(),
       facet.size = type_ignore(),
       facet.margin = type_ignore(),
-      facet.repeat_lbls_x = type_ignore(),
-      facet.repeat_lbls_y = type_ignore(),
+      facet.repeat_labels_x = type_ignore(),
+      facet.repeat_labels_y = type_ignore(),
       facet.fixed_x = type_ignore(),
       facet.drop = type_ignore(),
       facet.max_items = type_ignore(),
       facet.max_txt = type_ignore(),
       x.date_remove_years = type_ignore(),
-      x.lbl_align = type_ignore(),
+      x.label_align = type_ignore(),
       x.position = type_ignore(),
       x.max_txt = type_ignore(),
       category.max_txt = type_ignore(),
@@ -624,11 +628,15 @@ if (requireNamespace("plot2", quietly = TRUE)) {
       legend.barwidth = type_ignore(),
       legend.nbin = type_ignore(),
       legend.italic = type_ignore(),
-      sankey.node_width = type_ignore(),
-      sankey.node_whitespace = type_ignore(),
-      sankey.remove_axes = type_ignore(),
+      sankey_node_width = type_ignore(),
+      sankey_node_whitespace = type_ignore(),
+      sankey_remove_axes = type_ignore(),
       print = type_ignore(),
       data = type_ignore()
     )
   )
+}
+
+if (requireNamespace("plot2", quietly = TRUE)) {
+  tool_plot2 <- build_tool_plot2()
 }
